@@ -10,22 +10,22 @@ import (
 
 // GetSamplingSimplifiedMarkets 获取 sampling simplified markets（分页）。
 func (c *CLOBClient) GetSamplingSimplifiedMarkets(ctx context.Context, nextCursor string) (*PaginationPayload, error) {
-	return c.getMarketList(ctx, "/sampling-simplified-markets", nextCursor)
+	return c.getMarketList(ctx, EndpointGetSamplingSimplifiedMarkets, nextCursor)
 }
 
 // GetSamplingMarkets 获取 sampling markets（分页）。
 func (c *CLOBClient) GetSamplingMarkets(ctx context.Context, nextCursor string) (*PaginationPayload, error) {
-	return c.getMarketList(ctx, "/sampling-markets", nextCursor)
+	return c.getMarketList(ctx, EndpointGetSamplingMarkets, nextCursor)
 }
 
 // GetSimplifiedMarkets 获取 simplified markets（分页）。
 func (c *CLOBClient) GetSimplifiedMarkets(ctx context.Context, nextCursor string) (*PaginationPayload, error) {
-	return c.getMarketList(ctx, "/simplified-markets", nextCursor)
+	return c.getMarketList(ctx, EndpointGetSimplifiedMarkets, nextCursor)
 }
 
 // GetMarkets 获取 markets（分页，CLOB 服务下的 markets，不是 gamma-api）。
 func (c *CLOBClient) GetMarkets(ctx context.Context, nextCursor string) (*PaginationPayload, error) {
-	return c.getMarketList(ctx, "/markets", nextCursor)
+	return c.getMarketList(ctx, EndpointGetMarkets, nextCursor)
 }
 
 // GetMarket 获取单个 market（GET /markets/{conditionId}）。
@@ -34,7 +34,7 @@ func (c *CLOBClient) GetMarket(ctx context.Context, conditionID string) (json.Ra
 	if conditionID == "" {
 		return nil, ErrInvalidArgument("conditionID is required")
 	}
-	path := "/markets/" + url.PathEscape(conditionID)
+	path := EndpointGetMarketPrefix + url.PathEscape(conditionID)
 	var resp json.RawMessage
 	if err := c.http.Do(ctx, http.MethodGet, path, nil, nil, nil, &resp); err != nil {
 		return nil, err

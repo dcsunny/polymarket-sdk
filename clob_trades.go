@@ -68,7 +68,7 @@ func (c *CLOBClient) GetTrades(ctx context.Context, req *GetTradesRequest) ([]*T
 // GetTradesPage 获取交易单页（GET /data/trades）。
 // nextCursor 为空时默认使用 InitialCursor。
 func (c *CLOBClient) GetTradesPage(ctx context.Context, req *GetTradesRequest, nextCursor string) (*GetTradesResponse, error) {
-	path := "/data/trades"
+	path := EndpointGetTrades
 	vals := url.Values{}
 	if req != nil {
 		if req.ID != "" {

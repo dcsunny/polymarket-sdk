@@ -203,10 +203,20 @@ func NewOptimizedWalletClient(ctx context.Context, cfg WalletConfig, logger Clie
 
 // loadContractAddresses 加载合约地址
 func (c *defaultWalletClient) loadContractAddresses(cfg WalletConfig) error {
-	// 默认地址（Polygon 主网）
-	defaultCTF := common.HexToAddress("0x4D97DCd97eC945f40cF65F87097ACe5EA0476045")
-	defaultNegRisk := common.HexToAddress("0xd91E80cF2E7be2e162c6513ceD06f1dD0dA35296")
-	defaultUSDC := common.HexToAddress(USDCAddress)
+	// 根据 chain ID 选择默认合约地址（对齐 Node SDK）。
+	chainID := cfg.ChainID
+	if chainID == 0 {
+		chainID = DefaultChainID
+	}
+	contractCfg, err := GetContractConfig(chainID)
+	if err != nil {
+		// 未识别链时回退到 Polygon 主网配置，保持兼容。
+		contractCfg = PolygonContractConfig
+	}
+
+	defaultCTF := common.HexToAddress(contractCfg.ConditionalTokens)
+	defaultNegRisk := common.HexToAddress(contractCfg.NegRiskAdapter)
+	defaultUSDC := common.HexToAddress(contractCfg.Collateral)
 	defaultProxyFactory := common.HexToAddress("0xaB45c5A4B0c941a2F231C04C3f49182e1A254052")
 
 	c.ctfAddress = defaultCTF

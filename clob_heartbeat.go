@@ -10,7 +10,7 @@ import (
 // PostHeartbeat 发送心跳（L2 认证，POST /v1/heartbeats）。
 // 注意：启动 heartbeat 后，如果 10 秒内不继续发送，可能会触发订单自动取消（参考官方说明）。
 func (c *CLOBClient) PostHeartbeat(ctx context.Context, heartbeatID *string) (*HeartbeatResponse, error) {
-	path := "/v1/heartbeats"
+	path := EndpointPostHeartbeat
 
 	bodyObj := struct {
 		HeartbeatID *string `json:"heartbeat_id"`

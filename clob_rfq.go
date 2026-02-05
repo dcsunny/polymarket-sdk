@@ -31,7 +31,7 @@ func (c *CLOBClient) CreateRfqRequest(ctx context.Context, payload CreateRfqRequ
 	if payload.AssetIn == "" || payload.AssetOut == "" || payload.AmountIn == "" || payload.AmountOut == "" {
 		return nil, ErrInvalidArgument("assetIn/assetOut/amountIn/amountOut are required")
 	}
-	path := "/rfq/request"
+	path := EndpointCreateRfqRequest
 
 	bodyObj := createRfqRequestBody{
 		AssetIn:   payload.AssetIn,
@@ -62,7 +62,7 @@ func (c *CLOBClient) CancelRfqRequest(ctx context.Context, requestID string) (st
 	if requestID == "" {
 		return "", ErrInvalidArgument("requestID is required")
 	}
-	path := "/rfq/request"
+	path := EndpointCancelRfqRequest
 
 	bodyObj := CancelRfqRequestParams{RequestID: requestID}
 	body, err := json.Marshal(bodyObj)
@@ -84,7 +84,7 @@ func (c *CLOBClient) CancelRfqRequest(ctx context.Context, requestID string) (st
 
 // GetRfqRequests 获取 RFQ requests（GET /rfq/data/requests，L2 认证）。
 func (c *CLOBClient) GetRfqRequests(ctx context.Context, params *GetRfqRequestsParams) (*PaginatedResponse[RfqRequest], error) {
-	path := "/rfq/data/requests"
+	path := EndpointGetRfqRequests
 	vals := url.Values{}
 	if params != nil {
 		if params.Offset != "" {
@@ -131,7 +131,7 @@ func (c *CLOBClient) CreateRfqQuote(ctx context.Context, payload CreateRfqQuoteP
 	if payload.RequestID == "" || payload.AssetIn == "" || payload.AssetOut == "" || payload.AmountIn == "" || payload.AmountOut == "" {
 		return nil, ErrInvalidArgument("requestId/assetIn/assetOut/amountIn/amountOut are required")
 	}
-	path := "/rfq/quote"
+	path := EndpointCreateRfqQuote
 
 	bodyObj := createRfqQuoteBody{
 		RequestID: payload.RequestID,
@@ -163,7 +163,7 @@ func (c *CLOBClient) CancelRfqQuote(ctx context.Context, quoteID string) (string
 	if quoteID == "" {
 		return "", ErrInvalidArgument("quoteID is required")
 	}
-	path := "/rfq/quote"
+	path := EndpointCancelRfqQuote
 
 	bodyObj := CancelRfqQuoteParams{QuoteID: quoteID}
 	body, err := json.Marshal(bodyObj)
@@ -185,12 +185,12 @@ func (c *CLOBClient) CancelRfqQuote(ctx context.Context, quoteID string) (string
 
 // GetRfqRequesterQuotes 获取 requester 视角的 quotes（GET /rfq/data/requester/quotes，L2 认证）。
 func (c *CLOBClient) GetRfqRequesterQuotes(ctx context.Context, params *GetRfqQuotesParams) (*PaginatedResponse[RfqQuote], error) {
-	return c.getRfqQuotes(ctx, "/rfq/data/requester/quotes", params)
+	return c.getRfqQuotes(ctx, EndpointGetRfqRequesterQuotes, params)
 }
 
 // GetRfqQuoterQuotes 获取 quoter 视角的 quotes（GET /rfq/data/quoter/quotes，L2 认证）。
 func (c *CLOBClient) GetRfqQuoterQuotes(ctx context.Context, params *GetRfqQuotesParams) (*PaginatedResponse[RfqQuote], error) {
-	return c.getRfqQuotes(ctx, "/rfq/data/quoter/quotes", params)
+	return c.getRfqQuotes(ctx, EndpointGetRfqQuoterQuotes, params)
 }
 
 func (c *CLOBClient) getRfqQuotes(ctx context.Context, path string, params *GetRfqQuotesParams) (*PaginatedResponse[RfqQuote], error) {
@@ -239,7 +239,7 @@ func (c *CLOBClient) getRfqQuotes(ctx context.Context, path string, params *GetR
 
 // GetRfqBestQuote 获取某个 request 的最佳 quote（GET /rfq/data/best-quote，L2 认证）。
 func (c *CLOBClient) GetRfqBestQuote(ctx context.Context, params *GetRfqBestQuoteParams) (*RfqQuote, error) {
-	path := "/rfq/data/best-quote"
+	path := EndpointGetRfqBestQuote
 	vals := url.Values{}
 	if params != nil && params.RequestID != "" {
 		vals.Set("requestId", params.RequestID)
@@ -259,7 +259,7 @@ func (c *CLOBClient) GetRfqBestQuote(ctx context.Context, params *GetRfqBestQuot
 
 // GetRfqConfig 获取 RFQ 配置（GET /rfq/config，L2 认证）。
 func (c *CLOBClient) GetRfqConfig(ctx context.Context) (json.RawMessage, error) {
-	path := "/rfq/config"
+	path := EndpointRfqConfig
 	headers, err := c.l2Headers(http.MethodGet, path, "")
 	if err != nil {
 		return nil, err
@@ -275,7 +275,7 @@ func (c *CLOBClient) GetRfqConfig(ctx context.Context) (json.RawMessage, error) 
 // AcceptRfqQuote 接受 RFQ quote（POST /rfq/request/accept，L2 认证）。
 // payload 的具体字段随官方接口变动较频繁，这里直接透传 JSON（对齐 Node SDK 的行为）。
 func (c *CLOBClient) AcceptRfqQuote(ctx context.Context, payload any) (string, error) {
-	path := "/rfq/request/accept"
+	path := EndpointRfqRequestsAccept
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return "", err
@@ -294,7 +294,7 @@ func (c *CLOBClient) AcceptRfqQuote(ctx context.Context, payload any) (string, e
 // ApproveRfqOrder 审批 RFQ quote 并创建订单（POST /rfq/quote/approve，L2 认证）。
 // payload 直接透传 JSON。
 func (c *CLOBClient) ApproveRfqOrder(ctx context.Context, payload any) (string, error) {
-	path := "/rfq/quote/approve"
+	path := EndpointRfqQuoteApprove
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return "", err

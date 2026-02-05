@@ -14,7 +14,7 @@ func (c *CLOBClient) GetBuilderTradesPage(ctx context.Context, params *TradePara
 		return nil, ErrInvalidArgument("builder auth is not configured")
 	}
 
-	path := "/builder/trades"
+	path := EndpointGetBuilderTrades
 	headers, err := c.builderAuth.Headers(http.MethodGet, path, nil)
 	if err != nil {
 		return nil, err

@@ -12,7 +12,7 @@ func (c *CLOBClient) GetMarketTradesEvents(ctx context.Context, conditionID stri
 	if conditionID == "" {
 		return nil, ErrInvalidArgument("conditionID is required")
 	}
-	path := "/live-activity/events/" + url.PathEscape(conditionID)
+	path := EndpointGetMarketTradesEventsPrefix + url.PathEscape(conditionID)
 
 	var resp []MarketTradeEvent
 	if err := c.http.Do(ctx, http.MethodGet, path, nil, nil, nil, &resp); err != nil {

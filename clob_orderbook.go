@@ -15,7 +15,7 @@ func (c *CLOBClient) GetOrderBook(ctx context.Context, tokenID string) (*OrderBo
 	vals := url.Values{}
 	vals.Set("token_id", tokenID)
 	var resp OrderBookSummary
-	if err := c.http.Do(ctx, http.MethodGet, "/book", vals, nil, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodGet, EndpointGetOrderBook, vals, nil, nil, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -27,7 +27,7 @@ func (c *CLOBClient) GetOrderBooks(ctx context.Context, params []BookParams) ([]
 		return nil, ErrInvalidArgument("params is required")
 	}
 	var resp []*OrderBookSummary
-	if err := c.http.Do(ctx, http.MethodPost, "/books", nil, params, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodPost, EndpointGetOrderBooks, nil, params, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp, nil

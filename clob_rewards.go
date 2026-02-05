@@ -13,7 +13,7 @@ func (c *CLOBClient) GetEarningsForUserForDay(ctx context.Context, date string) 
 	if date == "" {
 		return nil, ErrInvalidArgument("date is required")
 	}
-	path := "/rewards/user"
+	path := EndpointGetEarningsForUserForDay
 
 	nextCursor := InitialCursor
 	var all []UserEarning
@@ -43,7 +43,7 @@ func (c *CLOBClient) GetTotalEarningsForUserForDay(ctx context.Context, date str
 	if date == "" {
 		return nil, ErrInvalidArgument("date is required")
 	}
-	path := "/rewards/user/total"
+	path := EndpointGetTotalEarningsForUserForDay
 	vals := url.Values{}
 	vals.Set("date", date)
 	vals.Set("signature_type", strconv.Itoa(c.sigType))
@@ -65,7 +65,7 @@ func (c *CLOBClient) GetUserEarningsAndMarketsConfig(ctx context.Context, date s
 	if date == "" {
 		return nil, ErrInvalidArgument("date is required")
 	}
-	path := "/rewards/user/markets"
+	path := EndpointGetRewardsEarningsPercentages
 
 	nextCursor := InitialCursor
 	var all []UserRewardsEarning
@@ -101,7 +101,7 @@ func (c *CLOBClient) GetUserEarningsAndMarketsConfig(ctx context.Context, date s
 
 // GetRewardPercentages 获取用户各市场奖励占比（GET /rewards/user/percentages，L2 认证）。
 func (c *CLOBClient) GetRewardPercentages(ctx context.Context) (RewardsPercentages, error) {
-	path := "/rewards/user/percentages"
+	path := EndpointGetLiquidityRewardPercentages
 	vals := url.Values{}
 	vals.Set("signature_type", strconv.Itoa(c.sigType))
 
@@ -119,7 +119,7 @@ func (c *CLOBClient) GetRewardPercentages(ctx context.Context) (RewardsPercentag
 
 // GetCurrentRewards 获取当前所有奖励市场（GET /rewards/markets/current，公开接口，自动分页）。
 func (c *CLOBClient) GetCurrentRewards(ctx context.Context) ([]MarketReward, error) {
-	path := "/rewards/markets/current"
+	path := EndpointGetRewardsMarketsCurrent
 	nextCursor := InitialCursor
 	var all []MarketReward
 
@@ -142,7 +142,7 @@ func (c *CLOBClient) GetRawRewardsForMarket(ctx context.Context, conditionID str
 	if conditionID == "" {
 		return nil, ErrInvalidArgument("conditionID is required")
 	}
-	path := "/rewards/markets/" + url.PathEscape(conditionID)
+	path := EndpointGetRewardsMarketsPrefix + url.PathEscape(conditionID)
 	nextCursor := InitialCursor
 	var all []MarketReward
 

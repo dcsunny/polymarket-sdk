@@ -11,7 +11,7 @@ import (
 
 // GetNotifications 获取通知列表（L2 认证）。
 func (c *CLOBClient) GetNotifications(ctx context.Context) ([]Notification, error) {
-	path := "/notifications"
+	path := EndpointGetNotifications
 	headers, err := c.l2Headers(http.MethodGet, path, "")
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (c *CLOBClient) GetNotifications(ctx context.Context) ([]Notification, erro
 // DropNotifications 删除通知（L2 认证）。
 // ids 为空时表示删除全部（与 Node SDK 行为一致）。
 func (c *CLOBClient) DropNotifications(ctx context.Context, ids []string) error {
-	path := "/notifications"
+	path := EndpointDropNotifications
 	headers, err := c.l2Headers(http.MethodDelete, path, "")
 	if err != nil {
 		return err

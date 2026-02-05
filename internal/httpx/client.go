@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -94,7 +95,7 @@ func (c *Client) DoRaw(ctx context.Context, method, path string, query url.Value
 	if body != nil {
 		reader = bytes.NewReader(body)
 	}
-
+	fmt.Println(reqURL)
 	req, err := http.NewRequestWithContext(ctx, method, reqURL, reader)
 	if err != nil {
 		return err

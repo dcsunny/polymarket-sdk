@@ -10,7 +10,7 @@ import (
 
 // GetClosedOnlyMode 获取 closed-only 模式（L2 认证）。
 func (c *CLOBClient) GetClosedOnlyMode(ctx context.Context) (*BanStatus, error) {
-	path := "/auth/ban-status/closed-only"
+	path := EndpointClosedOnly
 	headers, err := c.l2Headers(http.MethodGet, path, "")
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func (c *CLOBClient) GetClosedOnlyMode(ctx context.Context) (*BanStatus, error) 
 
 // CreateReadonlyAPIKey 创建只读 API Key（L2 认证）。
 func (c *CLOBClient) CreateReadonlyAPIKey(ctx context.Context) (*ReadonlyAPIKeyResponse, error) {
-	path := "/auth/readonly-api-key"
+	path := EndpointCreateReadonlyAPIKey
 	headers, err := c.l2Headers(http.MethodPost, path, "")
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (c *CLOBClient) CreateReadonlyAPIKey(ctx context.Context) (*ReadonlyAPIKeyR
 
 // GetReadonlyAPIKeys 获取当前账号的只读 API Key 列表（L2 认证）。
 func (c *CLOBClient) GetReadonlyAPIKeys(ctx context.Context) ([]string, error) {
-	path := "/auth/readonly-api-keys"
+	path := EndpointGetReadonlyAPIKeys
 	headers, err := c.l2Headers(http.MethodGet, path, "")
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func (c *CLOBClient) DeleteReadonlyAPIKey(ctx context.Context, key string) (bool
 	if key == "" {
 		return false, ErrInvalidArgument("key is required")
 	}
-	path := "/auth/readonly-api-key"
+	path := EndpointDeleteReadonlyAPIKey
 	payload := map[string]string{"key": key}
 	body, err := json.Marshal(payload)
 	if err != nil {
@@ -81,7 +81,7 @@ func (c *CLOBClient) ValidateReadonlyAPIKey(ctx context.Context, address, key st
 	if address == "" || key == "" {
 		return "", ErrInvalidArgument("address and key are required")
 	}
-	path := "/auth/validate-readonly-api-key"
+	path := EndpointValidateReadonlyAPIKey
 	vals := url.Values{}
 	vals.Set("address", address)
 	vals.Set("key", key)
@@ -95,7 +95,7 @@ func (c *CLOBClient) ValidateReadonlyAPIKey(ctx context.Context, address, key st
 
 // CreateBuilderAPIKey 创建 builder API Key（L2 认证）。
 func (c *CLOBClient) CreateBuilderAPIKey(ctx context.Context) (*BuilderAPIKey, error) {
-	path := "/auth/builder-api-key"
+	path := EndpointCreateBuilderAPIKey
 	headers, err := c.l2Headers(http.MethodPost, path, "")
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (c *CLOBClient) CreateBuilderAPIKey(ctx context.Context) (*BuilderAPIKey, e
 
 // GetBuilderAPIKeys 获取 builder API Key 列表（L2 认证）。
 func (c *CLOBClient) GetBuilderAPIKeys(ctx context.Context) ([]BuilderAPIKeyResponse, error) {
-	path := "/auth/builder-api-key"
+	path := EndpointGetBuilderAPIKeys
 	headers, err := c.l2Headers(http.MethodGet, path, "")
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (c *CLOBClient) RevokeBuilderAPIKey(ctx context.Context) error {
 	if c.builderAuth == nil {
 		return ErrInvalidArgument("builder auth is not configured")
 	}
-	path := "/auth/builder-api-key"
+	path := EndpointRevokeBuilderAPIKey
 
 	headers, err := c.builderAuth.Headers(http.MethodDelete, path, nil)
 	if err != nil {

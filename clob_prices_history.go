@@ -28,7 +28,7 @@ func (c *CLOBClient) GetPricesHistory(ctx context.Context, params PriceHistoryFi
 	}
 
 	var resp []MarketPrice
-	if err := c.http.Do(ctx, http.MethodGet, "/prices-history", vals, nil, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodGet, EndpointGetPricesHistory, vals, nil, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp, nil

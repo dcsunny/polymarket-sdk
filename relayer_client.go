@@ -26,7 +26,7 @@ import (
 
 // 已知的代理合约地址
 var knownProxyContracts = map[common.Address]bool{
-	common.HexToAddress("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"): true, // Polygon USDC
+	common.HexToAddress(USDCAddress): true, // Polygon 主网 USDC
 }
 
 // 公共的 ERC20 ABI 定义
@@ -642,10 +642,20 @@ func (c *RelayerClient) encodeNegRiskRedeemData(req *RedeemRelayerRequest) ([]by
 
 // getTargetContract 获取目标合约地址
 func (c *RelayerClient) getTargetContract(isNegRisk bool) common.Address {
-	if isNegRisk {
-		return common.HexToAddress("0xd91E80cF2E7be2e162c6513ceD06f1dD0dA35296") // NegRisk 适配器
+	chainID := c.config.ChainID
+	if chainID == 0 {
+		chainID = DefaultChainID
 	}
-	return common.HexToAddress("0x4d97dcd97ec945f40cf65f87097ace5ea0476045") // CTF 合约 (小写地址)
+	contractCfg, err := GetContractConfig(chainID)
+	if err != nil {
+		// 未识别链时回退到 Polygon 主网配置，保持兼容。
+		contractCfg = PolygonContractConfig
+	}
+
+	if isNegRisk {
+		return common.HexToAddress(contractCfg.NegRiskAdapter)
+	}
+	return common.HexToAddress(contractCfg.ConditionalTokens)
 }
 
 // fetchNonce 获取 Safe nonce

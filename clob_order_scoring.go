@@ -13,7 +13,7 @@ func (c *CLOBClient) IsOrderScoring(ctx context.Context, orderID string) (*Order
 	if orderID == "" {
 		return nil, ErrInvalidArgument("orderID is required")
 	}
-	path := "/order-scoring"
+	path := EndpointIsOrderScoring
 	vals := url.Values{}
 	vals.Set("order_id", orderID)
 
@@ -34,7 +34,7 @@ func (c *CLOBClient) AreOrdersScoring(ctx context.Context, orderIDs []string) (O
 	if len(orderIDs) == 0 {
 		return nil, ErrInvalidArgument("orderIDs is required")
 	}
-	path := "/orders-scoring"
+	path := EndpointAreOrdersScoring
 	// Node SDK: body is JSON array: ["orderId1","orderId2",...]
 	body, err := json.Marshal(orderIDs)
 	if err != nil {

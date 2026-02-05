@@ -138,7 +138,7 @@ func (c *CLOBClient) CreateAPIKey(ctx context.Context, nonce int) (*APICredentia
 	}
 
 	var creds APICredentials
-	if err := c.http.Do(ctx, http.MethodPost, "/auth/api-key", nil, nil, headers, &creds); err != nil {
+	if err := c.http.Do(ctx, http.MethodPost, EndpointCreateAPIKey, nil, nil, headers, &creds); err != nil {
 		return nil, err
 	}
 	c.SetAPICredentials(creds.APIKey, creds.Secret, creds.Passphrase)
@@ -153,7 +153,7 @@ func (c *CLOBClient) DeriveAPIKey(ctx context.Context, nonce int) (*APICredentia
 	}
 
 	var creds APICredentials
-	if err := c.http.Do(ctx, http.MethodGet, "/auth/derive-api-key", nil, nil, headers, &creds); err != nil {
+	if err := c.http.Do(ctx, http.MethodGet, EndpointDeriveAPIKey, nil, nil, headers, &creds); err != nil {
 		return nil, err
 	}
 	c.SetAPICredentials(creds.APIKey, creds.Secret, creds.Passphrase)
@@ -171,13 +171,13 @@ func (c *CLOBClient) CreateOrDeriveAPIKey(ctx context.Context, nonce int) (*APIC
 
 // GetAPIKeys 列出 API 密钥（L2 认证）。
 func (c *CLOBClient) GetAPIKeys(ctx context.Context) (*APIKeysResponse, error) {
-	headers, err := c.l2Headers(http.MethodGet, "/auth/api-keys", "")
+	headers, err := c.l2Headers(http.MethodGet, EndpointGetAPIKeys, "")
 	if err != nil {
 		return nil, err
 	}
 
 	var result APIKeysResponse
-	if err := c.http.Do(ctx, http.MethodGet, "/auth/api-keys", nil, nil, headers, &result); err != nil {
+	if err := c.http.Do(ctx, http.MethodGet, EndpointGetAPIKeys, nil, nil, headers, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -185,11 +185,11 @@ func (c *CLOBClient) GetAPIKeys(ctx context.Context) (*APIKeysResponse, error) {
 
 // DeleteAPIKey 删除当前的 API 密钥（L2 认证）。
 func (c *CLOBClient) DeleteAPIKey(ctx context.Context) error {
-	headers, err := c.l2Headers(http.MethodDelete, "/auth/api-key", "")
+	headers, err := c.l2Headers(http.MethodDelete, EndpointDeleteAPIKey, "")
 	if err != nil {
 		return err
 	}
-	return c.http.Do(ctx, http.MethodDelete, "/auth/api-key", nil, nil, headers, nil)
+	return c.http.Do(ctx, http.MethodDelete, EndpointDeleteAPIKey, nil, nil, headers, nil)
 }
 
 // GetActiveOrders 返回活跃订单，自动分页直到结束。
@@ -222,7 +222,7 @@ func (c *CLOBClient) GetOpenOrdersPage(ctx context.Context, req *GetActiveOrders
 // GetActiveOrdersPage 获取活跃订单单页（GET /data/orders）。
 // nextCursor 为空时默认使用 InitialCursor。
 func (c *CLOBClient) GetActiveOrdersPage(ctx context.Context, req *GetActiveOrdersRequest, nextCursor string) (*GetActiveOrdersResponse, error) {
-	path := "/data/orders"
+	path := EndpointGetOpenOrders
 	vals := url.Values{}
 	if req != nil {
 		if req.ID != "" {
@@ -257,7 +257,7 @@ func (c *CLOBClient) GetOrder(ctx context.Context, orderHash string) (*OpenOrder
 	if orderHash == "" {
 		return nil, ErrInvalidArgument("orderHash is required")
 	}
-	path := "/data/order/" + url.PathEscape(orderHash)
+	path := EndpointGetOrderPrefix + url.PathEscape(orderHash)
 	headers, err := c.l2Headers(http.MethodGet, path, "")
 	if err != nil {
 		return nil, err
@@ -295,7 +295,7 @@ func (c *CLOBClient) Price(ctx context.Context, tokenID string, side PriceSide) 
 	vals.Set("side", side.String())
 
 	var resp PriceResponse
-	if err := c.http.Do(ctx, http.MethodGet, "/price", vals, nil, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodGet, EndpointGetPrice, vals, nil, nil, &resp); err != nil {
 		return "", err
 	}
 	return resp.Price, nil

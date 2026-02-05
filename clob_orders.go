@@ -123,7 +123,7 @@ func (c *CLOBClient) PostOrderWithOptions(ctx context.Context, signedOrder *orde
 	if signedOrder == nil {
 		return nil, ErrInvalidArgument("signedOrder is required")
 	}
-	path := "/order"
+	path := EndpointPostOrder
 
 	if opts.PostOnly && orderType != OrderTypeGTC && orderType != OrderTypeGTD {
 		return nil, ErrInvalidArgument("postOnly is only supported for GTC and GTD orders")
@@ -219,7 +219,7 @@ func (c *CLOBClient) PostOrders(ctx context.Context, orders []*PostOrder) ([]*Or
 	if len(orders) > 15 {
 		return nil, ErrInvalidArgument("max 15 orders per batch")
 	}
-	path := "/orders"
+	path := EndpointPostOrders
 	body, err := json.Marshal(orders)
 	if err != nil {
 		return nil, err
@@ -248,7 +248,7 @@ func (c *CLOBClient) CancelOrders(ctx context.Context, orderIDs []string) (*Canc
 	if len(orderIDs) == 0 {
 		return nil, ErrInvalidArgument("orderIDs is required")
 	}
-	path := "/orders"
+	path := EndpointCancelOrders
 	body, err := json.Marshal(orderIDs)
 	if err != nil {
 		return nil, err
@@ -275,7 +275,7 @@ func (c *CLOBClient) CancelOrder(ctx context.Context, orderID string) (*CancelOr
 	if orderID == "" {
 		return nil, ErrInvalidArgument("orderID is required")
 	}
-	path := "/order"
+	path := EndpointCancelOrder
 	payload := map[string]string{"orderID": orderID}
 	body, err := json.Marshal(payload)
 	if err != nil {
@@ -294,7 +294,7 @@ func (c *CLOBClient) CancelOrder(ctx context.Context, orderID string) (*CancelOr
 
 // CancelAllOrders 取消所有订单。
 func (c *CLOBClient) CancelAllOrders(ctx context.Context) (*CancelOrdersResponse, error) {
-	path := "/cancel-all"
+	path := EndpointCancelAll
 	headers, err := c.l2Headers(http.MethodDelete, path, "")
 	if err != nil {
 		return nil, err
@@ -313,7 +313,7 @@ func (c *CLOBClient) CancelAll(ctx context.Context) (*CancelOrdersResponse, erro
 
 // CancelMarketOrders 取消市场或资产的订单。
 func (c *CLOBClient) CancelMarketOrders(ctx context.Context, req CancelMarketOrdersRequest) (*CancelOrdersResponse, error) {
-	path := "/cancel-market-orders"
+	path := EndpointCancelMarketOrders
 	body, err := json.Marshal(req)
 	if err != nil {
 		return nil, err

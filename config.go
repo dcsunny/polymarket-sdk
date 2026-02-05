@@ -11,7 +11,7 @@ const (
 	DefaultRTDSURL      = "wss://ws-live-data.polymarket.com"
 	DefaultRelayerURL   = "https://relay-v2.polymarket.com/"
 	DefaultTimeout      = 30 * time.Second
-	DefaultChainID      = 137
+	DefaultChainID      = ChainIDPolygon
 )
 
 const (

@@ -29,7 +29,7 @@ type GetActiveOrdersResponse struct {
 }
 
 const (
-	// EndCursor indicates no more pages.
+	// EndCursor 表示分页结束（与 Node SDK 对齐）。
 	EndCursor = "LTE="
 )
 

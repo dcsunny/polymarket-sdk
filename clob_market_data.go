@@ -16,7 +16,7 @@ func (c *CLOBClient) GetMidpoint(ctx context.Context, tokenID string) (json.RawM
 	vals := url.Values{}
 	vals.Set("token_id", tokenID)
 	var resp json.RawMessage
-	if err := c.http.Do(ctx, http.MethodGet, "/midpoint", vals, nil, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodGet, EndpointGetMidpoint, vals, nil, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -28,7 +28,7 @@ func (c *CLOBClient) GetMidpoints(ctx context.Context, params []BookParams) (jso
 		return nil, ErrInvalidArgument("params is required")
 	}
 	var resp json.RawMessage
-	if err := c.http.Do(ctx, http.MethodPost, "/midpoints", nil, params, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodPost, EndpointGetMidpoints, nil, params, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -40,7 +40,7 @@ func (c *CLOBClient) GetPrices(ctx context.Context, params []BookParams) (json.R
 		return nil, ErrInvalidArgument("params is required")
 	}
 	var resp json.RawMessage
-	if err := c.http.Do(ctx, http.MethodPost, "/prices", nil, params, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodPost, EndpointGetPrices, nil, params, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -54,7 +54,7 @@ func (c *CLOBClient) GetSpread(ctx context.Context, tokenID string) (json.RawMes
 	vals := url.Values{}
 	vals.Set("token_id", tokenID)
 	var resp json.RawMessage
-	if err := c.http.Do(ctx, http.MethodGet, "/spread", vals, nil, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodGet, EndpointGetSpread, vals, nil, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -66,7 +66,7 @@ func (c *CLOBClient) GetSpreads(ctx context.Context, params []BookParams) (json.
 		return nil, ErrInvalidArgument("params is required")
 	}
 	var resp json.RawMessage
-	if err := c.http.Do(ctx, http.MethodPost, "/spreads", nil, params, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodPost, EndpointGetSpreads, nil, params, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -80,7 +80,7 @@ func (c *CLOBClient) GetLastTradePrice(ctx context.Context, tokenID string) (jso
 	vals := url.Values{}
 	vals.Set("token_id", tokenID)
 	var resp json.RawMessage
-	if err := c.http.Do(ctx, http.MethodGet, "/last-trade-price", vals, nil, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodGet, EndpointGetLastTradePrice, vals, nil, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -92,7 +92,7 @@ func (c *CLOBClient) GetLastTradesPrices(ctx context.Context, params []BookParam
 		return nil, ErrInvalidArgument("params is required")
 	}
 	var resp json.RawMessage
-	if err := c.http.Do(ctx, http.MethodPost, "/last-trades-prices", nil, params, nil, &resp); err != nil {
+	if err := c.http.Do(ctx, http.MethodPost, EndpointGetLastTradesPrices, nil, params, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp, nil

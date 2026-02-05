@@ -36,7 +36,7 @@ func (c *CLOBClient) GetTickSize(tokenID string) (string, error) {
 	vals := url.Values{}
 	vals.Set("token_id", tokenID)
 	var resp TickSizeResponse
-	if err := c.http.Do(context.Background(), http.MethodGet, "/tick-size", vals, nil, nil, &resp); err != nil {
+	if err := c.http.Do(context.Background(), http.MethodGet, EndpointGetTickSize, vals, nil, nil, &resp); err != nil {
 		return "", err
 	}
 	tick := fmt.Sprintf("%g", resp.MinimumTickSize)
@@ -56,7 +56,7 @@ func (c *CLOBClient) GetNegRisk(tokenID string) (bool, error) {
 	vals := url.Values{}
 	vals.Set("token_id", tokenID)
 	var resp NegRiskResponse
-	if err := c.http.Do(context.Background(), http.MethodGet, "/neg-risk", vals, nil, nil, &resp); err != nil {
+	if err := c.http.Do(context.Background(), http.MethodGet, EndpointGetNegRisk, vals, nil, nil, &resp); err != nil {
 		return false, err
 	}
 	c.negRiskCache[tokenID] = resp.NegRisk
@@ -75,7 +75,7 @@ func (c *CLOBClient) GetFeeRateBps(tokenID string) (int, error) {
 	vals := url.Values{}
 	vals.Set("token_id", tokenID)
 	var resp FeeRateResponse
-	if err := c.http.Do(context.Background(), http.MethodGet, "/fee-rate", vals, nil, nil, &resp); err != nil {
+	if err := c.http.Do(context.Background(), http.MethodGet, EndpointGetFeeRate, vals, nil, nil, &resp); err != nil {
 		return 0, err
 	}
 	c.feeRateCache[tokenID] = resp.BaseFee

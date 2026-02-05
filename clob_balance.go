@@ -10,7 +10,7 @@ import (
 
 // GetBalanceAllowance 获取余额与授权（L2 认证）。
 func (c *CLOBClient) GetBalanceAllowance(ctx context.Context, params *BalanceAllowanceParams) (*BalanceAllowanceResponse, error) {
-	path := "/balance-allowance"
+	path := EndpointGetBalanceAllowance
 	headers, err := c.l2Headers(http.MethodGet, path, "")
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (c *CLOBClient) GetBalanceAllowance(ctx context.Context, params *BalanceAll
 
 // UpdateBalanceAllowance 触发余额与授权刷新（L2 认证）。
 func (c *CLOBClient) UpdateBalanceAllowance(ctx context.Context, params *BalanceAllowanceParams) error {
-	path := "/balance-allowance/update"
+	path := EndpointUpdateBalanceAllowance
 	headers, err := c.l2Headers(http.MethodGet, path, "")
 	if err != nil {
 		return err
