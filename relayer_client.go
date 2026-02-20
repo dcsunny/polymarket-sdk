@@ -273,9 +273,9 @@ func (c *RelayerClient) DeploySafeSubmit(ctx context.Context) (*RelayerResponse,
 // RedeemPositions 赎回位置（统一接口）
 func (c *RelayerClient) RedeemPositions(ctx context.Context, req *RedeemRelayerRequest) (*RelayerResponse, error) {
 	// 确保 Safe 已部署
-	if err := c.ensureSafeDeployed(ctx); err != nil {
-		return nil, fmt.Errorf("确保 Safe 部署失败: %w", err)
-	}
+	//if err := c.ensureSafeDeployed(ctx); err != nil {
+	//	return nil, fmt.Errorf("确保 Safe 部署失败: %w", err)
+	//}
 
 	// 构建 Safe 交易请求
 	txReq, err := c.buildSafeSubmitRequest(ctx, req)
@@ -688,11 +688,15 @@ func (c *RelayerClient) fetchNonce(ctx context.Context) (uint64, error) {
 		return 0, err
 	}
 
+	if resp.StatusCode >= 400 {
+		return 0, fmt.Errorf("nonce 请求失败: %s url=%s body=%s", resp.Status, u.String(), strings.TrimSpace(string(body)))
+	}
+
 	var nonceResp struct {
 		Nonce string `json:"nonce"`
 	}
 	if err := json.Unmarshal(body, &nonceResp); err != nil {
-		return 0, err
+		return 0, fmt.Errorf("解析 nonce 响应失败: %w url=%s body=%s", err, u.String(), strings.TrimSpace(string(body)))
 	}
 
 	if nonceResp.Nonce == "" {

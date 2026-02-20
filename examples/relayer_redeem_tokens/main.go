@@ -16,8 +16,8 @@ import (
 // 赎回代币（Redeem Positions）
 //
 // 说明：
-// - 该示例使用 Polymarket Relayer（`RelayerClient`）提交 redeem 交易。
-// - redeem 通常需要 Safe 已部署；若未部署，可设置 AUTO_DEPLOY_SAFE=true 自动部署（需要 Builder API 认证）。
+// - 该示例使用 Relayer 的统一赎回接口（参考 Python SDK 风格）。
+// - 需要 Safe 已部署（示例中不包含 Safe 部署逻辑）。
 //
 // 环境变量（必填）：
 // - POLYMARKET_RPC_URL
@@ -27,9 +27,8 @@ import (
 // 可选：
 // - POLYMARKET_RELAYER_URL（默认 https://relayer-v2.polymarket.com）
 // - POLYMARKET_CHAIN_ID（默认 137）
-// - AUTO_DEPLOY_SAFE（true/false，默认 false）
 //
-// Builder Auth（Safe 部署/某些 relayer 操作需要）：
+// Builder Auth（relayer 可能要求）：
 // - POLYMARKET_BUILDER_API_KEY
 // - POLYMARKET_BUILDER_API_SECRET
 // - POLYMARKET_BUILDER_PASSPHRASE
@@ -63,7 +62,7 @@ func main() {
 	relayerURL := strings.TrimRight(envString("POLYMARKET_RELAYER_URL", "https://relayer-v2.polymarket.com"), "/")
 	chainID := int64(envInt("POLYMARKET_CHAIN_ID", 137))
 
-	// Builder auth：可选（但 AUTO_DEPLOY_SAFE=true 时基本必需）
+	// Builder auth：可选，但 relayer 可能要求
 	var builderAuth *pm.BuilderAuth
 	if k := os.Getenv("POLYMARKET_BUILDER_API_KEY"); k != "" {
 		builderAuth = pm.NewBuilderAuth(
@@ -87,56 +86,50 @@ func main() {
 	}
 	defer client.Close()
 
+	fmt.Printf("Relayer URL: %s\n", relayerURL)
+	fmt.Printf("Chain ID: %d\n", chainID)
+	if builderAuth == nil {
+		fmt.Println("Builder auth: not set (relayer may reject with 401)")
+	} else {
+		fmt.Println("Builder auth: set")
+	}
 	fmt.Printf("EOA address: %s\n", client.GetAddress().Hex())
 	fmt.Printf("Safe address: %s\n", client.GetSafeAddress().Hex())
-
-	deployed, err := client.IsSafeDeployed(ctx)
-	if err != nil {
-		fmt.Printf("check safe deployed failed: %v\n", err)
-		return
-	}
-	if !deployed {
-		if envBool("AUTO_DEPLOY_SAFE", false) {
-			fmt.Println("Safe not deployed, deploying...")
-			if err := client.DeploySafe(ctx); err != nil {
-				fmt.Printf("deploy safe failed: %v\n", err)
-				return
-			}
-			fmt.Println("Safe deployed.")
-		} else {
-			fmt.Println("Safe not deployed. Set AUTO_DEPLOY_SAFE=true to deploy automatically (requires builder auth).")
-			return
-		}
-	}
+	fmt.Printf("Condition ID: %s\n", conditionID)
 
 	isNegRisk := envBool("IS_NEGRISK", true)
+	collateral := common.HexToAddress(envString("COLLATERAL_TOKEN", pm.USDCAddress))
+	parentCollection := [32]byte{}
 
-	// 1) NegRisk redeem
+	fmt.Printf("IsNegRisk: %v\n", isNegRisk)
+	req := &pm.RedeemRelayerRequest{
+		ConditionID:      conditionID,
+		CollateralToken:  collateral,
+		ParentCollection: parentCollection,
+		Metadata:         "redeem",
+		IsNegRisk:        isNegRisk,
+	}
+
 	if isNegRisk {
 		yesAmount := mustBigInt(envString("YES_AMOUNT", "0"))
 		noAmount := mustBigInt(envString("NO_AMOUNT", "0"))
-
-		resp, err := client.RedeemNegRiskPositions(ctx, conditionID, yesAmount, noAmount)
-		if err != nil {
-			fmt.Printf("redeem negrisk failed: %v\n", err)
+		fmt.Printf("Redeem amounts (yes/no): %s / %s\n", yesAmount.String(), noAmount.String())
+		req.RedeemAmounts = []*big.Int{yesAmount, noAmount}
+	} else {
+		indexSetsStr := envString("INDEX_SETS", "1,2")
+		indexSets, err := parseBigIntList(indexSetsStr)
+		if err != nil || len(indexSets) == 0 {
+			fmt.Printf("invalid INDEX_SETS: %q\n", indexSetsStr)
 			return
 		}
-		printRelayerResp(resp)
-		return
+		fmt.Printf("Index sets: %s\n", indexSetsStr)
+		fmt.Printf("Collateral token: %s\n", collateral.Hex())
+		req.IndexSets = indexSets
 	}
 
-	// 2) CTF redeem
-	indexSetsStr := envString("INDEX_SETS", "1,2")
-	indexSets, err := parseBigIntList(indexSetsStr)
-	if err != nil || len(indexSets) == 0 {
-		fmt.Printf("invalid INDEX_SETS: %q\n", indexSetsStr)
-		return
-	}
-	collateral := common.HexToAddress(envString("COLLATERAL_TOKEN", pm.USDCAddress))
-
-	resp, err := client.RedeemCTFPositions(ctx, conditionID, indexSets, collateral)
+	resp, err := client.RedeemPositions(ctx, req)
 	if err != nil {
-		fmt.Printf("redeem ctf failed: %v\n", err)
+		fmt.Printf("redeem failed: %v\n", err)
 		return
 	}
 	printRelayerResp(resp)
