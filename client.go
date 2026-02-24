@@ -13,6 +13,7 @@ type SDK struct {
 
 	REST   *RESTClient
 	CLOB   *CLOBClient
+	Bridge *BridgeClient // Bridge（跨链桥）客户端
 	WSS    *WSSClient
 	RTDS   *RTDSClient
 	Wallet *WalletModule
@@ -34,10 +35,15 @@ func New(cfg Config) (*SDK, error) {
 	if err != nil {
 		return nil, err
 	}
+	bridgeHTTP, err := httpx.New(cfg.BridgeBaseURL, cfg.Timeout, cfg.Proxy, cfg.UserAgent, cfg.Debug)
+	if err != nil {
+		return nil, err
+	}
 
 	sdk := &SDK{cfg: cfg}
 	sdk.REST = NewRESTClient(restHTTP)
 	sdk.CLOB = NewCLOBClient(clobHTTP, cfg)
+	sdk.Bridge = NewBridgeClient(bridgeHTTP)
 	sdk.WSS = NewWSSClient(cfg)
 	sdk.RTDS = NewRTDSClient(cfg)
 	sdk.Wallet = NewWalletModule(cfg)

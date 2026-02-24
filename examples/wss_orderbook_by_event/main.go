@@ -49,7 +49,7 @@ func main() {
 	}
 
 	handlers := map[string]pm.WSSMessageHandler{
-		"book": func(data json.RawMessage) error {
+		pm.WSSEventBook: func(data json.RawMessage) error {
 			var msg pm.WSSBookMessage
 			//fmt.Println(string(data))
 			if err := json.Unmarshal(data, &msg); err != nil {

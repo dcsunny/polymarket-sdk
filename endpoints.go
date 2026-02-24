@@ -101,4 +101,11 @@ const (
 	EndpointGetRfqQuoterQuotes    = "/rfq/data/quoter/quotes"
 	EndpointGetRfqBestQuote       = "/rfq/data/best-quote"
 	EndpointRfqConfig             = "/rfq/config"
+
+	// Bridge（跨链桥）端点
+	EndpointBridgeSupportedAssets = "/supported-assets" // 获取支持的资产列表
+	EndpointBridgeDeposit         = "/deposit"          // 创建充值地址
+	EndpointBridgeQuote           = "/quote"            // 获取跨链兑换报价
+	EndpointBridgeStatus          = "/status/"          // 获取交易状态（需拼接地址）
+	EndpointBridgeWithdraw        = "/withdraw"         // 创建提现地址
 )

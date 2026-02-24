@@ -4,14 +4,15 @@ package polymarket
 import "time"
 
 const (
-	DefaultBaseURL      = "https://gamma-api.polymarket.com"
-	DefaultCLOBBaseURL  = "https://clob.polymarket.com"
-	DefaultWSSMarketURL = "wss://ws-subscriptions-clob.polymarket.com/ws/market"
-	DefaultWSSUserURL   = "wss://ws-subscriptions-clob.polymarket.com/ws/user"
-	DefaultRTDSURL      = "wss://ws-live-data.polymarket.com"
-	DefaultRelayerURL   = "https://relay-v2.polymarket.com/"
-	DefaultTimeout      = 30 * time.Second
-	DefaultChainID      = ChainIDPolygon
+	DefaultBaseURL       = "https://gamma-api.polymarket.com"
+	DefaultCLOBBaseURL   = "https://clob.polymarket.com"
+	DefaultBridgeBaseURL = "https://bridge.polymarket.com" // Bridge（跨链桥）API 基础 URL
+	DefaultWSSMarketURL  = "wss://ws-subscriptions-clob.polymarket.com/ws/market"
+	DefaultWSSUserURL    = "wss://ws-subscriptions-clob.polymarket.com/ws/user"
+	DefaultRTDSURL       = "wss://ws-live-data.polymarket.com"
+	DefaultRelayerURL    = "https://relay-v2.polymarket.com/"
+	DefaultTimeout       = 30 * time.Second
+	DefaultChainID       = ChainIDPolygon
 )
 
 const (
@@ -22,12 +23,13 @@ const (
 
 // Config 定义 SDK 配置。
 type Config struct {
-	BaseURL      string
-	CLOBBaseURL  string
-	WSSMarketURL string
-	WSSUserURL   string
-	RTDSURL      string
-	RelayerURL   string
+	BaseURL       string
+	CLOBBaseURL   string
+	BridgeBaseURL string // Bridge（跨链桥）API 基础 URL
+	WSSMarketURL  string
+	WSSUserURL    string
+	RTDSURL       string
+	RelayerURL    string
 
 	Timeout   time.Duration
 	Proxy     string
@@ -61,6 +63,9 @@ func (c Config) withDefaults() Config {
 	}
 	if c.CLOBBaseURL == "" {
 		c.CLOBBaseURL = DefaultCLOBBaseURL
+	}
+	if c.BridgeBaseURL == "" {
+		c.BridgeBaseURL = DefaultBridgeBaseURL
 	}
 	if c.WSSMarketURL == "" {
 		c.WSSMarketURL = DefaultWSSMarketURL

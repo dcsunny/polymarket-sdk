@@ -122,3 +122,40 @@ func (c *CLOBClient) resolveFeeRate(tokenID string, userFeeRate int) (int, error
 	}
 	return marketFee, nil
 }
+
+// GetTickSizeByPath 通过路径参数获取 token 的最小价格刻度（GET /tick-size/{token_id}）。
+//
+// 与 GetTickSize 功能相同，但使用路径参数而非 query 参数传递 token_id。
+//
+// API: GET /tick-size/{token_id}
+// 文档: https://docs.polymarket.com/api-reference/market-data/get-tick-size-by-path-parameter
+func (c *CLOBClient) GetTickSizeByPath(ctx context.Context, tokenID string) (*TickSizeResponse, error) {
+	if tokenID == "" {
+		return nil, ErrInvalidArgument("tokenID is required")
+	}
+	path := EndpointGetTickSize + "/" + url.PathEscape(tokenID)
+	var resp TickSizeResponse
+	if err := c.http.Do(ctx, http.MethodGet, path, nil, nil, nil, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetFeeRateByPath 通过路径参数获取 token 的手续费率（GET /fee-rate/{token_id}）。
+//
+// 与 GetFeeRateBps 功能相同，但使用路径参数而非 query 参数传递 token_id。
+// 返回基点（basis points）表示的手续费率。
+//
+// API: GET /fee-rate/{token_id}
+// 文档: https://docs.polymarket.com/api-reference/market-data/get-fee-rate-by-path-parameter
+func (c *CLOBClient) GetFeeRateByPath(ctx context.Context, tokenID string) (*FeeRateResponse, error) {
+	if tokenID == "" {
+		return nil, ErrInvalidArgument("tokenID is required")
+	}
+	path := EndpointGetFeeRate + "/" + url.PathEscape(tokenID)
+	var resp FeeRateResponse
+	if err := c.http.Do(ctx, http.MethodGet, path, nil, nil, nil, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}

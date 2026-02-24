@@ -97,3 +97,68 @@ func (c *CLOBClient) GetLastTradesPrices(ctx context.Context, params []BookParam
 	}
 	return resp, nil
 }
+
+// GetPricesByQuery 通过 query 参数批量获取市场价格（GET /prices）。
+//
+// tokenIDs 和 sides 分别为逗号分隔的 token ID 列表和对应的买卖方向（BUY/SELL）。
+// 例如：tokenIDs = "id1,id2", sides = "BUY,SELL"
+//
+// API: GET /prices?token_ids=...&sides=...
+// 文档: https://docs.polymarket.com/api-reference/market-data/get-market-prices-query-parameters
+func (c *CLOBClient) GetPricesByQuery(ctx context.Context, tokenIDs string, sides string) (json.RawMessage, error) {
+	if tokenIDs == "" {
+		return nil, ErrInvalidArgument("tokenIDs is required")
+	}
+	if sides == "" {
+		return nil, ErrInvalidArgument("sides is required")
+	}
+	vals := url.Values{}
+	vals.Set("token_ids", tokenIDs)
+	vals.Set("sides", sides)
+	var resp json.RawMessage
+	if err := c.http.Do(ctx, http.MethodGet, EndpointGetPrices, vals, nil, nil, &resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// GetMidpointsByQuery 通过 query 参数批量获取 midpoint 中间价（GET /midpoints）。
+//
+// tokenIDs 为逗号分隔的 token ID 列表。
+// 例如：tokenIDs = "id1,id2"
+// 返回格式：{"token_id": "0.45", "token_id_2": "0.52"}
+//
+// API: GET /midpoints?token_ids=...
+// 文档: https://docs.polymarket.com/api-reference/market-data/get-midpoint-prices-query-parameters
+func (c *CLOBClient) GetMidpointsByQuery(ctx context.Context, tokenIDs string) (json.RawMessage, error) {
+	if tokenIDs == "" {
+		return nil, ErrInvalidArgument("tokenIDs is required")
+	}
+	vals := url.Values{}
+	vals.Set("token_ids", tokenIDs)
+	var resp json.RawMessage
+	if err := c.http.Do(ctx, http.MethodGet, EndpointGetMidpoints, vals, nil, nil, &resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// GetLastTradesPricesByQuery 通过 query 参数批量获取最后成交价（GET /last-trades-prices）。
+//
+// tokenIDs 为逗号分隔的 token ID 列表，最多 500 个。
+// 返回格式：[{"token_id": "...", "price": "0.45", "side": "BUY"}, ...]
+//
+// API: GET /last-trades-prices?token_ids=...
+// 文档: https://docs.polymarket.com/api-reference/market-data/get-last-trade-prices-query-parameters
+func (c *CLOBClient) GetLastTradesPricesByQuery(ctx context.Context, tokenIDs string) (json.RawMessage, error) {
+	if tokenIDs == "" {
+		return nil, ErrInvalidArgument("tokenIDs is required")
+	}
+	vals := url.Values{}
+	vals.Set("token_ids", tokenIDs)
+	var resp json.RawMessage
+	if err := c.http.Do(ctx, http.MethodGet, EndpointGetLastTradesPrices, vals, nil, nil, &resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
