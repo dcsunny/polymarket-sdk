@@ -71,8 +71,8 @@ func NewCLOBClient(http *httpx.Client, cfg Config) *CLOBClient {
 		feeRateCache:  make(map[string]int),
 	}
 
-	if cfg.BuilderAPIKey != "" && cfg.BuilderAPISecret != "" && cfg.BuilderPassphrase != "" {
-		client.builderAuth = NewBuilderAuth(cfg.BuilderAPIKey, cfg.BuilderAPISecret, cfg.BuilderPassphrase)
+	if cfg.APIKey != "" && cfg.APISecret != "" && cfg.Passphrase != "" {
+		client.builderAuth = NewBuilderAuth(cfg.APIKey, cfg.APISecret, cfg.Passphrase)
 	}
 
 	if client.privateKey != "" && client.address != "" {

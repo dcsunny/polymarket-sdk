@@ -49,11 +49,6 @@ type Config struct {
 	SignatureType int
 	Funder        string
 
-	// Builder（可选）：用于 builder flow（下单时注入 builder headers）
-	BuilderAPIKey     string
-	BuilderAPISecret  string
-	BuilderPassphrase string
-
 	// Wallet
 	RPCURL      string
 	BuilderAuth string
