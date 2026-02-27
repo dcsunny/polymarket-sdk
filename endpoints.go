@@ -108,4 +108,7 @@ const (
 	EndpointBridgeQuote           = "/quote"            // 获取跨链兑换报价
 	EndpointBridgeStatus          = "/status/"          // 获取交易状态（需拼接地址）
 	EndpointBridgeWithdraw        = "/withdraw"         // 创建提现地址
+
+	// Data API 端点
+	EndpointDataPositions = "/positions" // 用户持仓数据
 )

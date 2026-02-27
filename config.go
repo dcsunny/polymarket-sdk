@@ -6,11 +6,12 @@ import "time"
 const (
 	DefaultBaseURL       = "https://gamma-api.polymarket.com"
 	DefaultCLOBBaseURL   = "https://clob.polymarket.com"
+	DefaultDataBaseURL   = "https://data-api.polymarket.com"
 	DefaultBridgeBaseURL = "https://bridge.polymarket.com" // Bridge（跨链桥）API 基础 URL
 	DefaultWSSMarketURL  = "wss://ws-subscriptions-clob.polymarket.com/ws/market"
 	DefaultWSSUserURL    = "wss://ws-subscriptions-clob.polymarket.com/ws/user"
 	DefaultRTDSURL       = "wss://ws-live-data.polymarket.com"
-	DefaultRelayerURL    = "https://relay-v2.polymarket.com/"
+	DefaultRelayerURL    = "https://relayer-v2.polymarket.com/"
 	DefaultTimeout       = 30 * time.Second
 	DefaultChainID       = ChainIDPolygon
 )
@@ -25,6 +26,7 @@ const (
 type Config struct {
 	BaseURL       string
 	CLOBBaseURL   string
+	DataBaseURL   string
 	BridgeBaseURL string // Bridge（跨链桥）API 基础 URL
 	WSSMarketURL  string
 	WSSUserURL    string
@@ -63,6 +65,9 @@ func (c Config) withDefaults() Config {
 	}
 	if c.CLOBBaseURL == "" {
 		c.CLOBBaseURL = DefaultCLOBBaseURL
+	}
+	if c.DataBaseURL == "" {
+		c.DataBaseURL = DefaultDataBaseURL
 	}
 	if c.BridgeBaseURL == "" {
 		c.BridgeBaseURL = DefaultBridgeBaseURL

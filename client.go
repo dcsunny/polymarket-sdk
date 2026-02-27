@@ -13,6 +13,7 @@ type SDK struct {
 
 	REST   *RESTClient
 	CLOB   *CLOBClient
+	Data   *DataClient   // Data API 客户端
 	Bridge *BridgeClient // Bridge（跨链桥）客户端
 	WSS    *WSSClient
 	RTDS   *RTDSClient
@@ -35,6 +36,10 @@ func New(cfg Config) (*SDK, error) {
 	if err != nil {
 		return nil, err
 	}
+	dataHTTP, err := httpx.New(cfg.DataBaseURL, cfg.Timeout, cfg.Proxy, cfg.UserAgent, cfg.Debug)
+	if err != nil {
+		return nil, err
+	}
 	bridgeHTTP, err := httpx.New(cfg.BridgeBaseURL, cfg.Timeout, cfg.Proxy, cfg.UserAgent, cfg.Debug)
 	if err != nil {
 		return nil, err
@@ -43,6 +48,7 @@ func New(cfg Config) (*SDK, error) {
 	sdk := &SDK{cfg: cfg}
 	sdk.REST = NewRESTClient(restHTTP)
 	sdk.CLOB = NewCLOBClient(clobHTTP, cfg)
+	sdk.Data = NewDataClient(dataHTTP)
 	sdk.Bridge = NewBridgeClient(bridgeHTTP)
 	sdk.WSS = NewWSSClient(cfg)
 	sdk.RTDS = NewRTDSClient(cfg)
