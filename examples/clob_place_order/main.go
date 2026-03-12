@@ -24,7 +24,7 @@ func main() {
 		Proxy:         os.Getenv("PROXY"),
 		Funder:        os.Getenv("POLYMARKET_FUNDER"),
 		SignatureType: envInt("POLYMARKET_SIG_TYPE", pm.SignatureTypePolyGnosisSafe),
-		ChainID:       int64(envInt("POLYMARKET_CHAIN_ID", pm.DefaultChainID)),
+		ChainID:       137,
 	}
 
 	sdk, err := pm.New(cfg)
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	tokenID := os.Getenv("POLYMARKET_TOKEN_ID")
-	side := strings.ToUpper(envString("POLYMARKET_SIDE", "BUY"))
+	side := strings.ToUpper(envString("POLYMARKET_SIDE", "SELL"))
 	if tokenID == "" {
 		fmt.Println("missing POLYMARKET_TOKEN_ID")
 		return
@@ -42,8 +42,8 @@ func main() {
 
 	orderArgs := &pm.OrderArgs{
 		TokenID:     tokenID,
-		MakerAmount: "5500000",
-		TakerAmount: "10000000",
+		MakerAmount: "10000000",
+		TakerAmount: "5500000",
 		Side:        side,
 		Taker:       envString("POLYMARKET_TAKER", "0x0000000000000000000000000000000000000000"),
 		FeeRateBps:  envString("POLYMARKET_FEE_RATE_BPS", "0"),
